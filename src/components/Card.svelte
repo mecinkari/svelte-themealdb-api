@@ -1,11 +1,28 @@
 <script>
-    export let name;
-    export let image;
+    export let id;
+
+    let meals = [];
+
+    $: fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`)
+        .then((r) => r.json())
+        .then((data) => (meals = data["meals"][0]));
+    console.log(meals);
 </script>
 
-<div class="bg-white flex flex-col items-center w-full shadow">
-    <img class="overflow-hidden" src={image} alt="" />
-    <div class="p-2 text-center">
-        <p class="text-xl">{name}</p>
+{#if meals}
+    <div class="bg-white flex flex-col p-4 w-full shadow">
+        <img class="overflow-hidden" src={meals["strMealThumb"]} alt="" />
+        <div class="mt-4 flex flex-col">
+            <p class="text-lg">{meals["strMeal"] ? meals["strMeal"] : ""}</p>
+            <p class="text-gray-500 text-sm mt-auto">
+                {meals["strArea"] ? meals["strArea"] : ""} - {meals[
+                    "strCategory"
+                ]
+                    ? meals["strCategory"]
+                    : ""}
+            </p>
+        </div>
     </div>
-</div>
+{:else}
+    <div>Loading...</div>
+{/if}
